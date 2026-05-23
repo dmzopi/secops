@@ -105,7 +105,7 @@ if gitleaksEnabled():
     )
     '''
     result = subprocess.run(
-    [str(binary_path), "protect", "-v", "--staged"])
+    [str(binary_path), "protect", "-v", "--staged", "--redact"])
     exitCode = result.returncode
 
     if exitCode == 1:
