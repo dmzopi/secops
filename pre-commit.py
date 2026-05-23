@@ -109,18 +109,6 @@ if gitleaksEnabled():
     if exitCode == 1:
         RED = "\033[31m"
         RESET = "\033[0m"
-
-        print(f"""{RED}
-Warning: COMMIT REJECTED
-Gitleaks has detected sensitive information in your changes.
-
-Disable with:
-git config hooks.gitleaks false
-{RESET}""")
-
-        sys.exit(1)
-        RED = "\033[31m"
-        RESET = "\033[0m"
         print(f"""Warning: {RED} COMMIT REJECTED {RESET} Gitleaks has detected sensitive information in your changes.\n 
             To disable the gitleaks precommit hook run the following command:\n
             git config hooks.gitleaks false""")
