@@ -11,6 +11,8 @@
 - scans staged changes using Gitleaks
 - blocks the commit if secrets are detected
 - prints a warning message in the terminal
+### Pre-requisites
+- python3
 
 ### Installation
 1. Copy hook into Git hooks directory:
