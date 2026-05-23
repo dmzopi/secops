@@ -99,11 +99,13 @@ if gitleaksEnabled():
         gitleaksInstall()
 
     # Run check
-
+    '''
     result = subprocess.run(
         [str(binary_path), "detect", "--redact", "-v"]
     )
-
+    '''
+    result = subprocess.run(
+    [str(binary_path), "protect", "-v", "--staged"])
     exitCode = result.returncode
 
     if exitCode == 1:
