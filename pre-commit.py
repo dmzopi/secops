@@ -21,6 +21,11 @@ def gitleaksEnabled():
         return False
     return True
 
+def get_binary_path(plat: str):
+    return Path.home() / ".local" / "bin" / (
+            "gitleaks.exe" if plat == "windows" else "gitleaks"
+    )
+
 def gitleaksInstall():
     # win32 | darwin | linux
     plat = sys.platform
@@ -30,7 +35,7 @@ def gitleaksInstall():
     elif plat in ["win32"]:
         plat = "windows"
         arch = platform.machine().lower()
-        binary_name = "binary_name.exe"
+        binary_name = "gitleaks.exe"
     else:
         print(f"Platfrom {plat} not supported")
         sys.exit(0)
@@ -53,10 +58,11 @@ def gitleaksInstall():
     #print(asset)
     url = asset["browser_download_url"]
     print(f"Fetching release {url}")
+
     file_name = asset["name"]
-    binary_path = Path.home() / ".local" / "bin" / binary_name
+    binary_path = get_binary_path(plat)
     subprocess.check_call(["curl", "-L", url, "-o", file_name])
-    if os == "windows":
+    if plat == "windows":
         with zipfile.ZipFile(file_name, "r") as z:
             for name in z.namelist():
                 if name.endswith(binary_name):
@@ -73,18 +79,15 @@ def gitleaksInstall():
                     break
     Path(file_name).unlink(missing_ok=True)
 
-                
-
 # Execution
 print("pre-commit hook running")
 if gitleaksEnabled():
-    gitleaks_path = Path.home() / ".local" / "bin" / (
-        "gitleaks.exe" if os == "windows" else "gitleaks"
-    )
+    plat = sys.platform
+    binary_path = get_binary_path(plat)
     try:
-        # ✅ check if installed
+        # check if installed
         result = subprocess.run(
-            [str(gitleaks_path), "version"],
+            [str(binary_path), "version"],
             capture_output=True,
             text=True,
             check=True
@@ -95,9 +98,10 @@ if gitleaksEnabled():
         print("Gitleaks not found. Installing...")
         gitleaksInstall()
 
-    # ✅ ALWAYS run scan
+    # Run check
+
     result = subprocess.run(
-        [str(gitleaks_path), "detect", "--redact", "-v"]
+        [str(binary_path), "detect", "--redact", "-v"]
     )
 
     exitCode = result.returncode
